@@ -1,38 +1,52 @@
+import tkinter as tk
 from task_manager import TaskManager
 
 
-def main():
-    manager = TaskManager()
+class TodoApp:
+    def __init__(self, root):
+        self.manager = TaskManager()
+        self.root = root
+        self.root.title("SimpleToDo")
 
-    while True:
-        print("\n1 — Додати задачу")
-        print("2 — Показати задачі")
-        print("3 — Відмітити виконану")
-        print("4 — Видалити задачу")
-        print("0 — Вихід")
+        self.entry = tk.Entry(root, width=30)
+        self.entry.pack(pady=5)
 
-        choice = input("Оберіть дію: ")
+        tk.Button(root, text="Додати задачу", command=self.add_task).pack()
+        tk.Button(root, text="Позначити виконану", command=self.mark_done).pack()
+        tk.Button(root, text="Видалити задачу", command=self.delete_task).pack()
 
-        if choice == "1":
-            text = input("Введіть текст задачі: ")
-            manager.add_task(text)
+        self.listbox = tk.Listbox(root, width=40)
+        self.listbox.pack(pady=10)
 
-        elif choice == "2":
-            for i, task in enumerate(manager.tasks, start=1):
-                status = "✅" if task.is_done else "❌"
-                print(f"{i}. {task.text} {status}")
+    def refresh(self):
+        self.listbox.delete(0, tk.END)
+        for i, task in enumerate(self.manager.tasks, start=1):
+            status = "✓" if task.is_done else " "
+            self.listbox.insert(tk.END, f"{i}. [{status}] {task.text}")
 
-        elif choice == "3":
-            index = int(input("Номер задачі: ")) - 1
-            manager.mark_done(index)
+    def add_task(self):
+        text = self.entry.get().strip()
+        if text:
+            self.manager.add_task(text)
+            self.entry.delete(0, tk.END)
+            self.refresh()
 
-        elif choice == "4":
-            index = int(input("Номер задачі: ")) - 1
-            manager.remove_task(index)
+    def delete_task(self):
+        selected = self.listbox.curselection()
+        if selected:
+            index = selected[0]
+            self.manager.remove_task(index)
+            self.refresh()
 
-        elif choice == "0":
-            break
+    def mark_done(self):
+        selected = self.listbox.curselection()
+        if selected:
+            index = selected[0]
+            self.manager.mark_done(index)
+            self.refresh()
 
 
 if __name__ == "__main__":
-    main()
+    root = tk.Tk()
+    app = TodoApp(root)
+    root.mainloop()
