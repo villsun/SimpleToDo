@@ -23,7 +23,7 @@ Python 3.9 або новіший
 
 Склонуйте репозиторій:
 
-git clone https://github.com/yourusername/SimpleToDo.git
+git clone https://github.com/villsun/SimpleToDo
 
 
 Перейдіть у папку проєкту:
